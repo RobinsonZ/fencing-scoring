@@ -239,7 +239,7 @@ void foil_state() {
           state == LEFT_TGT_RIGHT_TGT) {
         setRight(LIGHTS_TGT);
       } else if (state == RIGHT_OFFTGT || state == LEFT_OFFTGT_RIGHT_OFFTGT ||
-          state == LEFT_OFFTGT_RIGHT_TGT) {
+          state == LEFT_TGT_RIGHT_OFFTGT) {
         setRight(LIGHTS_OFFTGT);
       } else {
         setRight(LIGHTS_OFF);
