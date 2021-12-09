@@ -18,7 +18,6 @@ Implementation notes:
     starts *after* the first 14ms.
 */
 
-#include <TimerOne.h>
 #include <Adafruit_CircuitPlayground.h>
 
 #include "include/constants.h"

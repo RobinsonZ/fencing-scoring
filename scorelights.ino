@@ -1,4 +1,5 @@
 #include <Adafruit_CircuitPlayground.h>
+#include <TimerOne.h>
 
 #include "include/constants.h"
 #include "include/scorelights.h"
@@ -6,6 +7,39 @@
 int currentR[10];
 int currentG[10];
 int currentB[10];
+
+volatile int left;
+volatile int right;
+bool blink;
+
+void doBlink() {
+  switch (left) {
+    case LIGHTS_OFF:
+      digitalWrite(LEFT_TARGET, LOW);
+      break;
+    case LIGHTS_OFFTGT:
+      digitalWrite(LEFT_TARGET, blink ? HIGH : LOW);
+      break;
+    case LIGHTS_TGT:
+      digitalWrite(LEFT_TARGET, HIGH);
+  }
+  switch (right) {
+    case LIGHTS_OFF:
+      digitalWrite(RIGHT_TARGET, LOW);
+      break;
+    case LIGHTS_OFFTGT:
+      digitalWrite(RIGHT_TARGET, blink ? HIGH : LOW);
+      break;
+    case LIGHTS_TGT:
+      digitalWrite(RIGHT_TARGET, HIGH);
+  }
+  blink = !blink;
+}
+void initBlink() {
+  Timer1.initialize(100000);
+  Timer1.attachInterrupt(doBlink);
+  Timer1.start();
+}
 
 void setLights(int from, int to, int r, int g, int b) {
   bool diff = false;
@@ -41,6 +75,8 @@ void setLeft(int setting) {
   }
 
   setLights(0, 5, r, g, b);
+
+  left = setting;
 }
 
 void setRight(int setting) {
@@ -61,4 +97,6 @@ void setRight(int setting) {
   }
 
   setLights(5, 10, r, g, b);
+
+  right = setting;
 }

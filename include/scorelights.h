@@ -5,6 +5,7 @@
 #define LIGHTS_TGT 1
 #define LIGHTS_OFFTGT 2
 
+void initBlink();
 void setLeft(int setting);
 void setRight(int setting);
 

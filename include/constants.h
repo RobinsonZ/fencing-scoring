@@ -12,9 +12,9 @@
 
 // LED outputs
 #define LEFT_TARGET 1
-#define LEFT_OFF_TARGET 0
-#define RIGHT_TARGET 2
-#define RIGHT_OFF_TARGET 2
+#define LEFT_OFF_TARGET 1
+#define RIGHT_TARGET 0
+#define RIGHT_OFF_TARGET 1
 
 // mode
 #define MODE_FOIL 0

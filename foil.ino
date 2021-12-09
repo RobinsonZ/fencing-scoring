@@ -40,6 +40,8 @@ void foil_setup() {
 
   digitalWrite(LEFT_B, LOW);
   digitalWrite(RIGHT_B, LOW);
+
+  initBlink();
 }
 
 void foil_state() {
