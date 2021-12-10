@@ -1,8 +1,8 @@
 #ifndef Foil_h
 #define Foil_h
 
-void foil_state();
+extern void foil_state();
 
-void foil_setup();
+extern void foil_setup();
 
 #endif

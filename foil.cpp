@@ -1,5 +1,8 @@
-#include "include/constants.h"
 #include "include/foil.h"
+
+#include <Arduino.h>
+
+#include "include/constants.h"
 #include "include/scorelights.h"
 
 #define WAIT 1
@@ -23,9 +26,12 @@
 #define LEFT_OFFTGT_RIGHT_OFFTGT 18
 #define LEFT_OFFTGT_RIGHT_TGT 19
 
-unsigned long timerMain, timerSecondary, timerConsole;
-unsigned int state = WAIT;
-unsigned int lastState = 0;
+#ifndef fence_timers
+#define fence_timers
+unsigned long foilTimerMain, foilTimerSecondary;
+unsigned int foilState = WAIT;
+unsigned int foilLastState = 0;
+#endif
 
 void foil_setup() {
   // outputs
@@ -49,17 +55,11 @@ void foil_state() {
   bool left_c = !digitalRead(LEFT_C);
   bool right_c = !digitalRead(RIGHT_C);
 
-  // if (millis() - timerConsole >= 100) {
-  //   Serial.print(state);
-  //   Serial.print("\t");
-  //   Serial.println(micros() - timerMain);
-  // }
-
-  if (state != lastState) {
-    Serial.println(state);
-    lastState = state;
+  if (foilState != foilLastState) {
+    Serial.println(foilState);
+    foilLastState = foilState;
   }
-  switch (state) {
+  switch (foilState) {
     case WAIT:
       // digitalWrite(LEFT_TARGET, LOW);
       // digitalWrite(LEFT_OFF_TARGET, LOW);
@@ -70,27 +70,27 @@ void foil_state() {
       setRight(LIGHTS_OFF);
 
       if (left_c) {
-        timerMain = micros();
-        state = LEFT_PRETOUCH;
+        foilTimerMain = micros();
+        foilState = LEFT_PRETOUCH;
       } else if (right_c) {
-        timerMain = micros();
-        state = RIGHT_PRETOUCH;
+        foilTimerMain = micros();
+        foilState = RIGHT_PRETOUCH;
       }  // otherwise stay in WAIT
       break;
     case LEFT_PRETOUCH:
       if (left_c) {
-        if (micros() - timerMain >= FOIL_MIN_TOUCH * 1000) {
-          timerMain = micros();
+        if (micros() - foilTimerMain >= FOIL_MIN_TOUCH * 1000) {
+          foilTimerMain = micros();
           if (!digitalRead(RIGHT_A)) {
             // on-target
-            state = LEFT_TGT_WAIT;
+            foilState = LEFT_TGT_WAIT;
           } else {
-            state = LEFT_OFFTGT_WAIT;
+            foilState = LEFT_OFFTGT_WAIT;
           }
         }  // otherwise stay here
       } else {
         // button got released
-        state = WAIT;
+        foilState = WAIT;
       }
 
       break;
@@ -98,72 +98,72 @@ void foil_state() {
       setLeft(LIGHTS_TGT);
 
       if (right_c) {
-        timerSecondary = micros();
-        state = LEFT_TGT_DOUBLE_PRETOUCH;
-      } else if (micros() - timerMain >= FOIL_DOUBLE_PERIOD * 1000L) {
-        timerMain = micros();
-        state = LEFT_TGT;
+        foilTimerSecondary = micros();
+        foilState = LEFT_TGT_DOUBLE_PRETOUCH;
+      } else if (micros() - foilTimerMain >= FOIL_DOUBLE_PERIOD * 1000L) {
+        foilTimerMain = micros();
+        foilState = LEFT_TGT;
       }  // otherwise stay here
       break;
     case LEFT_OFFTGT_WAIT:
       setLeft(LIGHTS_OFFTGT);
 
       if (right_c) {
-        timerSecondary = micros();
-        state = LEFT_OFFTGT_DOUBLE_PRETOUCH;
-      } else if (micros() - timerMain >= FOIL_DOUBLE_PERIOD * 1000L) {
-        timerMain = micros();
-        state = LEFT_OFFTGT;
+        foilTimerSecondary = micros();
+        foilState = LEFT_OFFTGT_DOUBLE_PRETOUCH;
+      } else if (micros() - foilTimerMain >= FOIL_DOUBLE_PERIOD * 1000L) {
+        foilTimerMain = micros();
+        foilState = LEFT_OFFTGT;
       }  // otherwise stay here
       break;
     case LEFT_TGT_DOUBLE_PRETOUCH:
       setLeft(LIGHTS_TGT);
 
       if (right_c) {
-        if (micros() - timerSecondary >= FOIL_MIN_TOUCH * 1000L) {
-          timerMain = micros();
+        if (micros() - foilTimerSecondary >= FOIL_MIN_TOUCH * 1000L) {
+          foilTimerMain = micros();
           if (!digitalRead(LEFT_A)) {
             // on-target
-            state = LEFT_TGT_RIGHT_TGT;
+            foilState = LEFT_TGT_RIGHT_TGT;
           } else {
-            state = LEFT_TGT_RIGHT_OFFTGT;
+            foilState = LEFT_TGT_RIGHT_OFFTGT;
           }
         }  // otherwise do nothing
       } else {
-        state = LEFT_TGT_WAIT;
+        foilState = LEFT_TGT_WAIT;
       }
       break;
     case LEFT_OFFTGT_DOUBLE_PRETOUCH:
       setLeft(LIGHTS_OFFTGT);
 
       if (right_c) {
-        if (micros() - timerSecondary >= FOIL_MIN_TOUCH * 1000L) {
-          timerMain = micros();
+        if (micros() - foilTimerSecondary >= FOIL_MIN_TOUCH * 1000L) {
+          foilTimerMain = micros();
           if (!digitalRead(LEFT_A)) {
             // on-target
-            state = LEFT_OFFTGT_RIGHT_TGT;
+            foilState = LEFT_OFFTGT_RIGHT_TGT;
           } else {
-            state = LEFT_OFFTGT_RIGHT_OFFTGT;
+            foilState = LEFT_OFFTGT_RIGHT_OFFTGT;
           }
         }  // otherwise do nothing
       } else {
-        state = LEFT_OFFTGT_WAIT;
+        foilState = LEFT_OFFTGT_WAIT;
       }
       break;
     case RIGHT_PRETOUCH:
       if (right_c) {
-        if (micros() - timerMain >= FOIL_MIN_TOUCH * 1000) {
-          timerMain = micros();
+        if (micros() - foilTimerMain >= FOIL_MIN_TOUCH * 1000) {
+          foilTimerMain = micros();
           if (!digitalRead(LEFT_A)) {
             // on-target
-            state = RIGHT_TGT_WAIT;
+            foilState = RIGHT_TGT_WAIT;
           } else {
-            state = RIGHT_OFFTGT_WAIT;
+            foilState = RIGHT_OFFTGT_WAIT;
           }
         }  // otherwise stay here
       } else {
         // button got released
-        state = WAIT;
+        foilState = WAIT;
       }
 
       break;
@@ -171,82 +171,82 @@ void foil_state() {
       setRight(LIGHTS_TGT);
 
       if (left_c) {
-        timerSecondary = micros();
-        state = RIGHT_TGT_DOUBLE_PRETOUCH;
-      } else if (micros() - timerMain >= FOIL_DOUBLE_PERIOD * 1000L) {
-        timerMain = micros();
-        state = RIGHT_TGT;
+        foilTimerSecondary = micros();
+        foilState = RIGHT_TGT_DOUBLE_PRETOUCH;
+      } else if (micros() - foilTimerMain >= FOIL_DOUBLE_PERIOD * 1000L) {
+        foilTimerMain = micros();
+        foilState = RIGHT_TGT;
       }  // otherwise stay here
       break;
     case RIGHT_OFFTGT_WAIT:
       setRight(LIGHTS_OFFTGT);
 
       if (left_c) {
-        timerSecondary = micros();
-        state = RIGHT_OFFTGT_DOUBLE_PRETOUCH;
-      } else if (micros() - timerMain >= FOIL_DOUBLE_PERIOD * 1000L) {
-        timerMain = micros();
-        state = RIGHT_OFFTGT;
+        foilTimerSecondary = micros();
+        foilState = RIGHT_OFFTGT_DOUBLE_PRETOUCH;
+      } else if (micros() - foilTimerMain >= FOIL_DOUBLE_PERIOD * 1000L) {
+        foilTimerMain = micros();
+        foilState = RIGHT_OFFTGT;
       }  // otherwise stay here
       break;
     case RIGHT_TGT_DOUBLE_PRETOUCH:
       setRight(LIGHTS_TGT);
 
       if (left_c) {
-        if (micros() - timerSecondary >= FOIL_MIN_TOUCH * 1000L) {
-          timerMain = micros();
+        if (micros() - foilTimerSecondary >= FOIL_MIN_TOUCH * 1000L) {
+          foilTimerMain = micros();
           if (!digitalRead(RIGHT_A)) {
             // on-target
-            state = LEFT_TGT_RIGHT_TGT;
+            foilState = LEFT_TGT_RIGHT_TGT;
           } else {
-            state = LEFT_OFFTGT_RIGHT_TGT;
+            foilState = LEFT_OFFTGT_RIGHT_TGT;
           }
         }  // otherwise do nothing
       } else {
-        state = RIGHT_TGT_WAIT;
+        foilState = RIGHT_TGT_WAIT;
       }
       break;
     case RIGHT_OFFTGT_DOUBLE_PRETOUCH:
       setRight(LIGHTS_OFFTGT);
 
       if (left_c) {
-        if (micros() - timerSecondary >= FOIL_MIN_TOUCH * 1000L) {
-          timerMain = micros();
+        if (micros() - foilTimerSecondary >= FOIL_MIN_TOUCH * 1000L) {
+          foilTimerMain = micros();
           if (!digitalRead(RIGHT_A)) {
             // on-target
-            state = LEFT_TGT_RIGHT_OFFTGT;
+            foilState = LEFT_TGT_RIGHT_OFFTGT;
           } else {
-            state = LEFT_OFFTGT_RIGHT_OFFTGT;
+            foilState = LEFT_OFFTGT_RIGHT_OFFTGT;
           }
         }  // otherwise do nothing
       } else {
-        state = RIGHT_OFFTGT_WAIT;
+        foilState = RIGHT_OFFTGT_WAIT;
       }
       break;
     case LEFT_TGT ... LEFT_OFFTGT_RIGHT_TGT:
 
-      if (state == LEFT_TGT || state == LEFT_TGT_RIGHT_TGT ||
-          state == LEFT_TGT_RIGHT_OFFTGT) {
+      if (foilState == LEFT_TGT || foilState == LEFT_TGT_RIGHT_TGT ||
+          foilState == LEFT_TGT_RIGHT_OFFTGT) {
         setLeft(LIGHTS_TGT);
-      } else if (state == LEFT_OFFTGT || state == LEFT_OFFTGT_RIGHT_TGT ||
-          state == LEFT_OFFTGT_RIGHT_OFFTGT) {
+      } else if (foilState == LEFT_OFFTGT || foilState == LEFT_OFFTGT_RIGHT_TGT ||
+                 foilState == LEFT_OFFTGT_RIGHT_OFFTGT) {
         setLeft(LIGHTS_OFFTGT);
       } else {
         setLeft(LIGHTS_OFF);
       }
 
-      if (state == RIGHT_TGT || state == LEFT_OFFTGT_RIGHT_TGT ||
-          state == LEFT_TGT_RIGHT_TGT) {
+      if (foilState == RIGHT_TGT || foilState == LEFT_OFFTGT_RIGHT_TGT ||
+          foilState == LEFT_TGT_RIGHT_TGT) {
         setRight(LIGHTS_TGT);
-      } else if (state == RIGHT_OFFTGT || state == LEFT_OFFTGT_RIGHT_OFFTGT ||
-          state == LEFT_TGT_RIGHT_OFFTGT) {
+      } else if (foilState == RIGHT_OFFTGT || foilState == LEFT_OFFTGT_RIGHT_OFFTGT ||
+                 foilState == LEFT_TGT_RIGHT_OFFTGT) {
         setRight(LIGHTS_OFFTGT);
       } else {
         setRight(LIGHTS_OFF);
       }
 
-      if (micros() - timerMain >= REARM_TIME * 1000L) {
-        state = WAIT;
+      if (micros() - foilTimerMain >= REARM_TIME * 1000L) {
+        foilState = WAIT;
       }
       break;
   }

@@ -22,9 +22,10 @@ Implementation notes:
 
 #include "include/constants.h"
 #include "include/foil.h"
+#include "include/epee.h"
 
 // settings (for now)
-#define MODE MODE_FOIL
+#define MODE MODE_EPEE
 
 void setup() {
   CircuitPlayground.begin();
@@ -40,7 +41,7 @@ void setup() {
       foil_setup();
       break;
     case MODE_EPEE:
-      // TODO
+      epee_setup();
       break;
     case MODE_SABRE:
       // TOOD
@@ -54,7 +55,7 @@ void loop() {
       foil_state();
       break;
     case MODE_EPEE:
-      // TODO
+      epee_state();
       break;
     case MODE_SABRE:
       // TOOD

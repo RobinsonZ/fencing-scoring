@@ -25,6 +25,9 @@
 #define FOIL_MIN_TOUCH 14
 #define FOIL_DOUBLE_PERIOD 300
 
+#define EPEE_MIN_TOUCH 2
+#define EPEE_DOUBLE_PERIOD 45
+
 #define REARM_TIME 1000
 
 #endif
