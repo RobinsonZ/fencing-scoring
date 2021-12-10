@@ -23,6 +23,7 @@ Implementation notes:
 #include "include/constants.h"
 #include "include/foil.h"
 #include "include/epee.h"
+#include "include/sabre.h"
 
 // settings (for now)
 #define MODE MODE_EPEE
@@ -44,8 +45,7 @@ void setup() {
       epee_setup();
       break;
     case MODE_SABRE:
-      // TOOD
-      break;
+      sabre_setup();
   }
 }
 
@@ -58,7 +58,6 @@ void loop() {
       epee_state();
       break;
     case MODE_SABRE:
-      // TOOD
-      break;
+      sabre_state();
   }
 }

@@ -28,6 +28,8 @@
 #define EPEE_MIN_TOUCH 2
 #define EPEE_DOUBLE_PERIOD 45
 
+#define SABRE_DOUBLE_PERIOD 170
+
 #define REARM_TIME 1000
 
 #endif
