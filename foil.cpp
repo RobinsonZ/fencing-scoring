@@ -26,12 +26,9 @@
 #define LEFT_OFFTGT_RIGHT_OFFTGT 18
 #define LEFT_OFFTGT_RIGHT_TGT 19
 
-#ifndef fence_timers
-#define fence_timers
 unsigned long foilTimerMain, foilTimerSecondary;
 unsigned int foilState = WAIT;
 unsigned int foilLastState = 0;
-#endif
 
 void foil_setup() {
   // outputs
@@ -61,11 +58,6 @@ void foil_state() {
   }
   switch (foilState) {
     case WAIT:
-      // digitalWrite(LEFT_TARGET, LOW);
-      // digitalWrite(LEFT_OFF_TARGET, LOW);
-      // digitalWrite(RIGHT_TARGET, LOW);
-      // digitalWrite(RIGHT_OFF_TARGET, LOW);
-
       setLeft(LIGHTS_OFF);
       setRight(LIGHTS_OFF);
 

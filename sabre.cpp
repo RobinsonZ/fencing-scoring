@@ -14,12 +14,9 @@
 #define RIGHT_TOUCH 5
 #define DOUBLE_TOUCH 6
 
-#ifndef fence_timers
-#define fence_timers
 unsigned long sabreTimerMain;
 unsigned int sabreState = WAIT;
 unsigned int sabreLastState = 0;
-#endif
 
 void sabre_setup() {
   // outputs

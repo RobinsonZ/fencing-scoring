@@ -18,12 +18,9 @@
 #define RIGHT_TOUCH 9
 #define DOUBLE_TOUCH 10
 
-#ifndef fence_timers
-#define fence_timers
 unsigned long epeeTimerMain, epeeTimerSecondary;
 unsigned int epeeState = WAIT;
 unsigned int epeeLastState = 0;
-#endif
 
 void epee_setup() {
   // outputs
